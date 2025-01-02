@@ -1,0 +1,10 @@
+{% if allMenus %}
+    <p>The menus and drinks we serve:</p>
+    <ul>
+        {% for menu in allMenus %}
+        <li><p>{{ menu.title }}</p></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No menus available.</p>
+{% endif %}
