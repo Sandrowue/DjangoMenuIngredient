@@ -1,12 +1,12 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, Http404
 from django.template import loader
 
-from .models import Ingredient, MenuItem
+from .models import Ingredient, MenuItem, RecipeRequirement
 
 # Create your views here.
 def index(request):
-    return HttpResponse("Welcome to Django Delight's kitchen!")
+    return render(request, "MenuIngredientMaster/index.html")
 
 def ingredients(request):
     allIngredients = Ingredient.objects.order_by("name")
@@ -17,19 +17,24 @@ def ingredients(request):
     return HttpResponse(template.render(context, request))
 
 def deleteIngredient(request, deleteIngredient=None):
-    return HttpResponse("You're about to delete the ingredient %s." % deleteIngredient)
+    try:
+        toDelete = Ingredient.objects.get(pk=deleteIngredient)
+    except Ingredient.DoesNotExist:
+        raise Http404("Questien does not exist!")
+    return HttpResponse("You're about to delete the ingredient %s." % deleteIngredient, {"toDelete": toDelete})
 
+# Using render instead of HttpResponse
 def aviableMenus(request):
     allMenus = MenuItem.objects.order_by("title")
-    template = loader.get_template("MenuIngredientMaster/menus.html")
     context = {
         "allMenus": allMenus,
     }
-    return HttpResponse(template.render(context, request))
+    return render(request, "MenuIngredientMaster/menus.html", context)
 
+# Using get_object_or_404 
 def itemsInMenu(request, menu_item=None):
-    response = "This menu has following ingredients: %s."
-    return HttpResponse(response % menu_item)
+    specificMenu = get_object_or_404(RecipeRequirement, pk=menu_item)
+    return HttpResponse("This menu has following ingredients: %s." % menu_item, {"specificMenu": specificMenu})
 
 def financials(request):
     return HttpResponse("Django Delight's profit and revenue.")

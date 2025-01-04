@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<head>
+</head>
+
+<body>
+    <div class="topnav" id="pageTopNav">
+        <a href="{% url 'index' %}" class="active">Home</a>
+        <a href="{% url 'ingredients' %}">Ingredients</a>
+        <a href="{% url 'aviableMenus' %}">Menus</a>
+    </div>
+    {% block content %}
+    {% {% endblock %} %}
+</body>
