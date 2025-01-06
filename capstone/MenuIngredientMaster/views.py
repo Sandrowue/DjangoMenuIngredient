@@ -16,6 +16,16 @@ def ingredients(request):
     }
     return HttpResponse(template.render(context, request))
 
+def addIngredient(request):
+    if request.method == "post":
+        newIngredient = Ingredient()
+        newIngredient.name = request.post['ingredientInput'] 
+        newIngredient.quantity = request.post['amountInput']
+        newIngredient.unit = request.post['unitInput']
+        newIngredient.unit_price = request.post['unitPriceIntput']
+        newIngredient.save()
+    return render(request, "MenuIngredientMaster/addIngredient.html")
+
 def deleteIngredient(request, deleteIngredient=None):
     try:
         toDelete = Ingredient.objects.get(pk=deleteIngredient)
