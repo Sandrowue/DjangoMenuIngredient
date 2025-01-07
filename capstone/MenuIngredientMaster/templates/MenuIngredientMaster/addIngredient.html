@@ -1,14 +1,27 @@
 <form action="" method="post">
     {% csrf_token %}
+    <div>
     <label name="ingredientLabel" for="ingredientInput">
         Add Ingredient:
     </label>
     <input id="ingredientInput" name="ingredientInput">
-    <label name="amountLabel" for="amountInput">Amount</label>
-    <input type="number" id="amountInput" name="amountInput">
-    <label name="unitLabel" for="unitInput">Unit</label>
-    <input id="unitInput" name="unitInput">
-    <label name="unitPriceLabel" for="unitPriceInput">Unit Price</label>
-    <input id="unitPriceInput" name="unitPriceInput">
+    </div>
+    </br>
+    <div>
+        <label name="amountLabel" for="amountInput">Amount</label>
+        <input type="number" id="amountInput" name="amountInput">
+    </div>
+</br>
+    <div>
+        <label name="unitLabel" for="unitInput">Unit</label>
+        <input id="unitInput" name="unitInput">
+    </div>
+</br>
+    <div>
+        <label name="unitPriceLabel" for="unitPriceInput">Unit Price</label>
+        <input id="unitPriceInput" name="unitPriceInput">
+    </div>
+</br>
     <input type="submit" value="Submit"/>
+    
 </form>
