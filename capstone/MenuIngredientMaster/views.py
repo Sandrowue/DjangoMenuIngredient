@@ -17,12 +17,14 @@ def ingredients(request):
     return HttpResponse(template.render(context, request))
 
 def addIngredient(request):
-    if request.method == "post":
+    print(request.method)
+    if request.method == "POST":
+        print('Meni läpi')
         newIngredient = Ingredient()
-        newIngredient.name = request.post['ingredientInput'] 
-        newIngredient.quantity = request.post['amountInput']
-        newIngredient.unit = request.post['unitInput']
-        newIngredient.unit_price = request.post['unitPriceIntput']
+        newIngredient.name = request.POST['ingredientInput'] 
+        newIngredient.quantity = int(request.POST['amountInput'])
+        newIngredient.unit = request.POST['unitInput']
+        newIngredient.unit_price = int(request.POST['unitPriceInput'])
         newIngredient.save()
     return render(request, "MenuIngredientMaster/addIngredient.html")
 
