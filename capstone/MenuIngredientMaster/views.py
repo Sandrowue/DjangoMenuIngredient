@@ -24,7 +24,7 @@ def addIngredient(request):
         newIngredient.name = request.POST['ingredientInput'] 
         newIngredient.quantity = int(request.POST['amountInput'])
         newIngredient.unit = request.POST['unitInput']
-        newIngredient.unit_price = int(request.POST['unitPriceInput'])
+        newIngredient.unit_price = float(request.POST['unitPriceInput'])
         newIngredient.save()
     return render(request, "MenuIngredientMaster/addIngredient.html")
 
