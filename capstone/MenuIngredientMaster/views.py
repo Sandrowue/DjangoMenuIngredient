@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from django.template import loader
 
@@ -26,6 +26,8 @@ def addIngredient(request):
         newIngredient.unit = request.POST['unitInput']
         newIngredient.unit_price = float(request.POST['unitPriceInput'])
         newIngredient.save()
+        return redirect("addIngredient")
+
     return render(request, "MenuIngredientMaster/addIngredient.html")
 
 def deleteIngredient(request, deleteIngredient=None):
