@@ -43,6 +43,14 @@ def aviableMenus(request):
     }
     return render(request, "MenuIngredientMaster/menus.html", context)
 
+def addMenu(request):
+    if request.method == "POST":
+        newMenu = MenuItem()
+        newMenu.title = request.POST['menuInput']
+        newMenu.price = request.POST['priceInput']
+        newMenu.save()
+    return render(request, 'MenuIngredientMaster/addMenu.html')
+
 # Using get_object_or_404 
 def itemsInMenu(request, menu_item=None):
     specificMenu = get_object_or_404(RecipeRequirement, pk=menu_item)

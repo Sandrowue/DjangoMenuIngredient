@@ -1,0 +1,18 @@
+<form action="" method="post">
+    {% csrf_token %}
+    <div>
+    <label name="menuLabel" for="menuInput">
+        Add Menu:
+    </label>
+    <input id="menuInput" name="menuInput">
+    </div>
+    </br>
+</br>
+    <div>
+        <label name="priceLabel" for="priceInput">Price</label>
+        <input id="priceInput" name="priceInput">
+    </div>
+</br>
+    <input type="submit" value="Submit"/>
+    
+</form>
