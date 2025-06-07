@@ -25,6 +25,7 @@ def addIngredient(request):
         newIngredient.quantity = int(request.POST['amountInput'])
         newIngredient.unit = request.POST['unitInput']
         newIngredient.unit_price = float(request.POST['unitPriceInput'])
+        newIngredient.total_price = newIngredient.calculate_total_price()
         newIngredient.save()
         return redirect("addIngredient")
 

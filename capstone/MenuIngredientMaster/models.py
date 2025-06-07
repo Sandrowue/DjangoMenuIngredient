@@ -8,9 +8,14 @@ class Ingredient(models.Model):
     quantity = models.FloatField(default=0)
     unit = models.CharField(max_length=15)
     unit_price = models.FloatField(default=0)
+    total_price = models.FloatField(default=0)
 
     def __str__(self):
         return self.name
+    
+    def calculate_total_price(self):
+        return self.quantity * self.unit_price
+
 
 class MenuItem(models.Model):
     title = models.CharField(max_length=75)
@@ -30,3 +35,4 @@ class RecipeRequirement(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     quantity = models.FloatField(default=0)
+    price = models.FloatField(default=0)
