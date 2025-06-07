@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<head>
+</head>
+
+{% extends "MenuIngredientMaster/base.html" %}
+
+{% block content %}
 {% if allMenus %}
     <p>The menus and drinks we serve:</p>
     <ul>
@@ -8,3 +15,4 @@
 {% else %}
     <p>No menus available.</p>
 {% endif %}
+{% endblock %}

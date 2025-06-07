@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<head>
+</head>
+
+{% extends "MenuIngredientMaster/base.html" %}
+
+{% block content %}
 {% if allIngredients %}
     <p>All ingredients in the inventory:</p>
     <ul>
@@ -8,3 +15,4 @@
 {% else %}
     <p>No ingredients available.</p>
 {% endif %}
+{% endblock %}
