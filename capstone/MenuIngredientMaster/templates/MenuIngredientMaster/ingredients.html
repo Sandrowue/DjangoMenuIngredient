@@ -6,12 +6,25 @@
 
 {% block content %}
 {% if allIngredients %}
-    <p>All ingredients in the inventory:</p>
-    <ul>
-    {% for ingredient in allIngredients %}
-        <li><p>{{ ingredient.name }}</p></li>
-    {% endfor %}
-    </ul>
+<p>All ingredients in the inventory:</p>
+    <table>
+    <tr>
+        <th>Ingredient</th>
+        <th>Amount</th>
+        <th>Unit</th>
+        <th>Price per Unit</th>
+        <th>Total Price</th>
+    </tr>
+{% for ingredient in allIngredients %}
+    <tr>
+        <td>{{ ingredient.name }}</td>
+        <td>{{ ingredient.quantity }}</td>
+        <td>{{ ingredient.unit }}</td>
+        <td>{{ ingredient.unit_price }}</td>
+        <td>{{ ingredient.total_price|floatformat:2 }}</td> 
+    </tr>
+{% endfor %}
+</table>
 {% else %}
     <p>No ingredients available.</p>
 {% endif %}

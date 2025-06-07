@@ -7,11 +7,18 @@
 {% block content %}
 {% if allMenus %}
     <p>The menus and drinks we serve:</p>
-    <ul>
+    <table>
+        <tr>
+            <th>Menu</th>
+            <th>Price</th>
+        </tr>
         {% for menu in allMenus %}
-        <li><p>{{ menu.title }}</p></li>
+        <tr>
+            <td>{{ menu.title }}</td>
+            <td>{{ menu.price }}</td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
 {% else %}
     <p>No menus available.</p>
 {% endif %}
