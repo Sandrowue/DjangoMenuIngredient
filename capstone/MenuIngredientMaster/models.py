@@ -31,8 +31,8 @@ class Purchase(models.Model):
     def was_purchased_recently(self):
         return self.timestamp >= timezone.now() - datetime.timedelta(days=1)
 
-class RecipeRequirement(models.Model):
+class RecipeRequirements(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     quantity = models.FloatField(default=0)
-    price = models.FloatField(default=0)
+    cost = models.FloatField(default=0)
