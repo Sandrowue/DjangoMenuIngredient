@@ -12,4 +12,5 @@ urlpatterns = [
     path("financials", views.financials, name="financials"),
     path("itemsInMenu/<int:menu_item>", views.itemsInMenu, name="itemsInMenu"),
     path("sold", views.sold, name="sold"),
+    path("addRecipeItem", views.addRecipeItem, name="addRecipeItem"),
 ]

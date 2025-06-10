@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from django.template import loader
 
-from .models import Ingredient, MenuItem, RecipeRequirement
+from .models import Ingredient, MenuItem, RecipeRequirements
+from .forms import RecipeEditForm
 
 # Create your views here.
 def index(request):
@@ -17,7 +18,6 @@ def ingredients(request):
     return HttpResponse(template.render(context, request))
 
 def addIngredient(request):
-    print(request.method)
     if request.method == "POST":
         print('Meni läpi')
         newIngredient = Ingredient()
@@ -56,8 +56,24 @@ def addMenu(request):
 
 # Using get_object_or_404 
 def itemsInMenu(request, menu_item=None):
-    specificMenu = get_object_or_404(RecipeRequirement, pk=menu_item)
+    specificMenu = get_object_or_404(RecipeRequirements, pk=menu_item)
     return HttpResponse("This menu has following ingredients: %s." % menu_item, {"specificMenu": specificMenu})
+
+def addRecipeItem(request):
+    if request.method == "POST":
+        form = RecipeEditForm(request.POST) 
+        if form.is_valid():
+            newItem = RecipeRequirements()
+            newItem.menu_item = form.cleaned_data["menu_item"]
+            newItem.ingredient = form.cleaned_data["ingredient"]
+            newItem.quantity = float(form.cleaned_data["quantity"])
+            newItem.cost = float(form.cleaned_data["cost"])
+            newItem.save()
+            return redirect('addRecipeItem')
+    else:
+        form = RecipeEditForm()
+    return render(request, 'MenuIngredientMaster/addRecipeItem.html' , {"form":form})
+
 
 def financials(request):
     return HttpResponse("Django Delight's profit and revenue.")
