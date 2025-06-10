@@ -1,29 +1,30 @@
 <!DOCTYPE html>
-<head>
-</head>
+<html>
+    <head>
+    </head>
 
-{% extends "MenuIngredientMaster/base.html" %}
+    {% extends "MenuIngredientMaster/base.html" %}
 
-{% block content %}
-<br/>
-    
-<form action="" method="post">
-    {% csrf_token %}
-    <div>
-    <label name="menuLabel" for="menuInput">
-        Add Menu:
-    </label>
-    <input id="menuInput" name="menuInput">
-    </div>
+    {% block content %}
+    <br/>
+        
+    <form action="" method="post">
+        {% csrf_token %}
+        <div>
+        <label name="menuLabel" for="menuInput">
+            Add Menu:
+        </label>
+        <input id="menuInput" name="menuInput">
+        </div>
+        </br>
     </br>
-</br>
-    <div>
-        <label name="priceLabel" for="priceInput">Price</label>
-        <input id="priceInput" name="priceInput">
-    </div>
-</br>
-    <input type="submit" value="Submit"/>
-    
-</form>
-
+        <div>
+            <label name="priceLabel" for="priceInput">Price</label>
+            <input id="priceInput" name="priceInput">
+        </div>
+    </br>
+        <input type="submit" value="Submit"/>
+        
+    </form>
+</html>
 {% endblock %}

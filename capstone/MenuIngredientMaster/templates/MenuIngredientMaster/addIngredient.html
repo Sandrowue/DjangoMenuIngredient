@@ -1,38 +1,40 @@
 <!DOCTYPE html>
-<head>
-</head>
+<html>
+    <head>
+    </head>
 
 {% extends "MenuIngredientMaster/base.html" %}
 
 {% block content %}
-<br/>
+    <br/>
 
-<form action="" method="post">
-    {% csrf_token %}
-    <div>
-    <label name="ingredientLabel" for="ingredientInput">
-        Add Ingredient:
-    </label>
-    <input id="ingredientInput" name="ingredientInput">
-    </div>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div>
+        <label name="ingredientLabel" for="ingredientInput">
+            Add Ingredient:
+        </label>
+        <input id="ingredientInput" name="ingredientInput">
+        </div>
+        </br>
+        <div>
+            <label name="amountLabel" for="amountInput">Amount</label>
+            <input type="number" id="amountInput" name="amountInput">
+        </div>
     </br>
-    <div>
-        <label name="amountLabel" for="amountInput">Amount</label>
-        <input type="number" id="amountInput" name="amountInput">
-    </div>
-</br>
-    <div>
-        <label name="unitLabel" for="unitInput">Unit</label>
-        <input id="unitInput" name="unitInput">
-    </div>
-</br>
-    <div>
-        <label name="unitPriceLabel" for="unitPriceInput">Unit Price</label>
-        <input id="unitPriceInput" name="unitPriceInput">
-    </div>
-</br>
-    <input type="submit" value="Submit"/>
-    
-</form>
+        <div>
+            <label name="unitLabel" for="unitInput">Unit</label>
+            <input id="unitInput" name="unitInput">
+        </div>
+    </br>
+        <div>
+            <label name="unitPriceLabel" for="unitPriceInput">Unit Price</label>
+            <input id="unitPriceInput" name="unitPriceInput">
+        </div>
+    </br>
+        <input type="submit" value="Submit"/>
+        
+    </form>
+</html>
 
 {% endblock %}
