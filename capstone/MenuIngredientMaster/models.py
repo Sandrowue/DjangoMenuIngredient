@@ -5,7 +5,7 @@ from django.utils import timezone
 # Create your models here.
 class Ingredient(models.Model):
     name = models.CharField(max_length=75)
-    quantity = models.FloatField(default=0)
+    quantity = models.IntegerField(default=0)
     unit = models.CharField(max_length=15)
     unit_price = models.FloatField(default=0)
     total_price = models.FloatField(default=0)
