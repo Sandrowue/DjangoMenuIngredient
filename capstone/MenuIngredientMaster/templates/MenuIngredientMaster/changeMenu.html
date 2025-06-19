@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+
+    {% extends "MenuIngredientMaster/base.html" %}
+
+    {% block content %}
+    <br/>
+        
+    <form action="" method="post">
+        {% csrf_token %}
+        <div>
+        <label name="menuLabel" for="menuInput">
+            Change Menu:
+        </label>
+        <input id="menuInput" name="menuInput" value="{{ menuitem.title }}">
+        </div>
+        </br>
+    </br>
+        <div>
+            <label name="priceLabel" for="priceInput">Price</label>
+            <input id="priceInput" name="priceInput" value="{{ menuitem.price }}">
+        </div>
+    </br>
+        <input type="submit" value="Submit"/>
+        
+    </form>
+</html>
+{% endblock %}

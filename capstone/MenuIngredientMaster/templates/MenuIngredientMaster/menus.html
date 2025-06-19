@@ -5,6 +5,10 @@
 {% extends "MenuIngredientMaster/base.html" %}
 
 {% block content %}
+<br/>
+<a href="{% url 'addMenu' %}">Add Menu</a>
+<br/>
+<a href="{% url 'addRecipeItem' %}">Add Receipe Item</a>
 {% if allMenus %}
     <p>The menus and drinks we serve:</p>
     <table>
@@ -13,10 +17,14 @@
             <th>Price</th>
         </tr>
         {% for menu in allMenus %}
-        <tr>
-            <td>{{ menu.title }}</td>
-            <td>{{ menu.price }}</td>
-        </tr>
+           
+            <tr>
+                <td>{{ menu.title }}</td>
+                <td>{{ menu.price }}</td>
+                <td><button>Show Receipe</button></td>
+                <td><a href="{% url 'changeMenu' menu.id %}"><button>Change Item</button></a></td>
+                <td><button>Delete Item</button></td>
+            </tr>
         {% endfor %}
     </table>
 {% else %}
