@@ -5,6 +5,8 @@
 {% extends "MenuIngredientMaster/base.html" %}
 
 {% block content %}
+<br/>
+<a href="{% url 'addIngredient'%}">Add Ingredient</a>
 {% if allIngredients %}
 <p>All ingredients in the inventory:</p>
     <table>
@@ -22,6 +24,8 @@
         <td>{{ ingredient.unit }}</td>
         <td>{{ ingredient.unit_price }}</td>
         <td>{{ ingredient.total_price|floatformat:2 }}</td> 
+        <td><a href="{% url 'changeIngredient' ingredient.id %}"><button>Change Item</button></a></td>
+        <td><button>Delete Item</button></td>
     </tr>
 {% endfor %}
 </table>
