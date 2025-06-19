@@ -27,9 +27,21 @@ def addIngredient(request):
         newIngredient.unit_price = float(request.POST['unitPriceInput'])
         newIngredient.total_price = newIngredient.calculate_total_price()
         newIngredient.save()
-        return redirect("addIngredient")
 
     return render(request, "MenuIngredientMaster/addIngredient.html")
+
+def changeIngredient(request, ingredient_id):
+    ingredientitem = get_object_or_404(Ingredient, id=ingredient_id)
+    if request.method == 'POST':
+        ingredient = ingredientitem
+        ingredient.name = request.POST['ingredientInput'] 
+        ingredient.quantity = int(request.POST['amountInput'])
+        ingredient.unit = request.POST['unitInput']
+        ingredient.unit_price = float(request.POST['unitPriceInput'])
+        ingredient.total_price = ingredient.calculate_total_price()
+        ingredient.save()
+    return render(request, "MenuIngredientMaster/changeIngredient.html", {"ingredientitem": ingredientitem})
+
 
 def deleteIngredient(request, deleteIngredient=None):
     try:
@@ -52,7 +64,17 @@ def addMenu(request):
         newMenu.title = request.POST['menuInput']
         newMenu.price = request.POST['priceInput']
         newMenu.save()
+
     return render(request, 'MenuIngredientMaster/addMenu.html')
+
+def changeMenu(request, menuitem_id):
+    menuitem = get_object_or_404(MenuItem, id=menuitem_id)
+    if request.method == "POST":
+        menu = menuitem
+        menu.title = request.POST['menuInput']
+        menu.price = request.POST['priceInput']
+        menu.save()
+    return render(request, 'MenuIngredientMaster/changeMenu.html', {"menuitem": menuitem})
 
 # Using get_object_or_404 
 def itemsInMenu(request, menu_item=None):
@@ -67,12 +89,12 @@ def addRecipeItem(request):
             newItem.menu_item = form.cleaned_data["menu_item"]
             newItem.ingredient = form.cleaned_data["ingredient"]
             newItem.quantity = float(form.cleaned_data["quantity"])
-            newItem.cost = float(form.cleaned_data["cost"])
             newItem.save()
             return redirect('addRecipeItem')
     else:
         form = RecipeEditForm()
-    return render(request, 'MenuIngredientMaster/addRecipeItem.html' , {"form":form})
+    ingredients = Ingredient.objects.all()
+    return render(request, 'MenuIngredientMaster/addRecipeItem.html' , {"form":form, "ingredients": ingredients})
 
 
 def financials(request):
