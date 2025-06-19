@@ -10,8 +10,38 @@
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
+            <div>
+                <p>Unit:</p>
+                <span id="unit"></span>
+            </div>
+            <br/>
             <input type="submit", value="Submit">
         </form>
     </body>
+
+        <!-- JSON data block -->
+    <script id="ingredient-units-data" type="application/json">
+        {
+            {% for ingredient in ingredients %}
+                "{{ ingredient.id }}": "{{ ingredient.unit }}"{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        }
+    </script>
+
+    <script>
+        // Parse the JSON data from the script tag
+        const ingredientUnits = JSON.parse(document.getElementById("ingredient-units-data").textContent);
+        const ingredientSelect = document.getElementById("id_ingredient");
+        const unitSpan = document.getElementById("unit")
+
+        function updateUnit() {
+            const selectedId = ingredientSelect.value;
+            unitSpan.textContent = ingredientUnits[selectedId] || "";
+        }
+
+        ingredientSelect.addEventListener("change", updateUnit);
+        updateUnit()
+    </script>
     {% endblock %}
 </html>
+
