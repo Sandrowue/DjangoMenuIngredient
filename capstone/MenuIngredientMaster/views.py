@@ -43,12 +43,11 @@ def changeIngredient(request, ingredient_id):
     return render(request, "MenuIngredientMaster/changeIngredient.html", {"ingredientitem": ingredientitem})
 
 
-def deleteIngredient(request, deleteIngredient=None):
-    try:
-        toDelete = Ingredient.objects.get(pk=deleteIngredient)
-    except Ingredient.DoesNotExist:
-        raise Http404("Questien does not exist!")
-    return HttpResponse("You're about to delete the ingredient %s." % deleteIngredient, {"toDelete": toDelete})
+def deleteIngredient(request, ingredient_id):
+    toDelete = Ingredient.objects.get(id=ingredient_id)
+    toDelete.delete()
+    return redirect("ingredients")
+    
 
 # Using render instead of HttpResponse
 def aviableMenus(request):
@@ -76,10 +75,15 @@ def changeMenu(request, menuitem_id):
         menu.save()
     return render(request, 'MenuIngredientMaster/changeMenu.html', {"menuitem": menuitem})
 
-# Using get_object_or_404 
-def itemsInMenu(request, menu_item=None):
-    specificMenu = get_object_or_404(RecipeRequirements, pk=menu_item)
-    return HttpResponse("This menu has following ingredients: %s." % menu_item, {"specificMenu": specificMenu})
+def deleteMenu(request, menuitem_id):
+    toDelete = MenuItem.objects.get(id=menuitem_id)
+    toDelete.delete()
+    return redirect("aviableMenus")
+
+def showReceipe(request, menuitem_id):
+    ingredients = Ingredient.objects.all()
+    receipe = RecipeRequirements.objects.filter(menu_item_id=menuitem_id)
+    return render(request, 'MenuIngredientMaster/showReceipe.html', {"receipe": receipe, "ingredients": ingredients})
 
 def addRecipeItem(request):
     if request.method == "POST":
@@ -95,7 +99,6 @@ def addRecipeItem(request):
         form = RecipeEditForm()
     ingredients = Ingredient.objects.all()
     return render(request, 'MenuIngredientMaster/addRecipeItem.html' , {"form":form, "ingredients": ingredients})
-
 
 def financials(request):
     return HttpResponse("Django Delight's profit and revenue.")

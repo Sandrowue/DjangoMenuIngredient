@@ -25,7 +25,7 @@
         <td>{{ ingredient.unit_price }}</td>
         <td>{{ ingredient.total_price|floatformat:2 }}</td> 
         <td><a href="{% url 'changeIngredient' ingredient.id %}"><button>Change Item</button></a></td>
-        <td><button>Delete Item</button></td>
+        <td><a href="{% url 'deleteIngredient' ingredient.id %}"><button>Delete Item</button></a></td>
     </tr>
 {% endfor %}
 </table>
