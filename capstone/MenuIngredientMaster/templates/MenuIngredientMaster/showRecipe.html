@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+</head>
+
+{% extends "MenuIngredientMaster/base.html" %}
+
+{% block content %}
+<br/>
+<a href="{% url 'addRecipeItem' %}">Add Receipe Item</a>
+{% if receipe %}
+    <p>Ingredients in receipe for one <strong>{{ menu.title }}</strong>:</p>
+    <table>
+        <tr>
+            <th>Ingredient</th>
+            <th>Amount</th>
+            <th>Unit</th>
+            <th>Cost</th>
+        </tr>
+        {% for item in receipe %}
+           
+            <tr>
+                <td>{{ item.ingredient.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.ingredient.unit }}</td>
+                <td>{{ item.cost }}</td>
+                <td><a href="{% url 'changeRecipeItem' item.id %}"><button>Change Item</button></a></td>
+                <td><a href="{% url 'deleteRecipeItem' item.id %}"><button>Delete Item</button></a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No receipe ingredients available.</p>
+{% endif %}
+{% endblock %}
