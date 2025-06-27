@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from django.template import loader
 
-from .models import Ingredient, MenuItem, RecipeRequirements
-from .forms import RecipeEditForm
+from .models import Ingredient, MenuItem, RecipeRequirements, Purchase
+from .forms import RecipeEditForm, SoldEditForm
 
 # Create your views here.
 def index(request):
@@ -80,10 +80,10 @@ def deleteMenu(request, menuitem_id):
     toDelete.delete()
     return redirect("aviableMenus")
 
-def showReceipe(request, menuitem_id):
-    ingredients = Ingredient.objects.all()
+def showRecipe(request, menuitem_id):
+    menu= get_object_or_404(MenuItem, id=menuitem_id)
     receipe = RecipeRequirements.objects.filter(menu_item_id=menuitem_id)
-    return render(request, 'MenuIngredientMaster/showReceipe.html', {"receipe": receipe, "ingredients": ingredients})
+    return render(request, 'MenuIngredientMaster/showRecipe.html', {"receipe": receipe, "menu": menu})
 
 def addRecipeItem(request):
     if request.method == "POST":
@@ -100,8 +100,50 @@ def addRecipeItem(request):
     ingredients = Ingredient.objects.all()
     return render(request, 'MenuIngredientMaster/addRecipeItem.html' , {"form":form, "ingredients": ingredients})
 
-def financials(request):
-    return HttpResponse("Django Delight's profit and revenue.")
+def changeRecipeItem(request, reciperequirements_id):
+    recipe_item = get_object_or_404(RecipeRequirements, id=reciperequirements_id)
+    if request.method == "POST":
+        form = RecipeEditForm(request.POST) 
+        if form.is_valid():
+            recipe_item.menu_item = form.cleaned_data["menu_item"]
+            recipe_item.ingredient = form.cleaned_data["ingredient"]
+            recipe_item.quantity = float(form.cleaned_data["quantity"])
+            recipe_item.save()
+            return redirect('showRecipe', menuitem_id=recipe_item.menu_item.id)
+    else:
+        form = RecipeEditForm(initial={
+            "menu_item": recipe_item.menu_item,
+            "ingredient": recipe_item.ingredient,
+            "quantity": recipe_item.quantity,
+        })
+    ingredients = Ingredient.objects.all()
+    return render(request, 'MenuIngredientMaster/changeRecipeItem.html' , {"form":form, "ingredients": ingredients, "menu": recipe_item.menu_item})
 
+def deleteRecipeItem(request, reciperequirements_id):
+    toDelete = get_object_or_404(RecipeRequirements, id=reciperequirements_id)
+    menuitem_id = toDelete.menu_item.id
+    toDelete.delete()
+    return redirect("showRecipe", menuitem_id=menuitem_id)
+    
 def sold(request):
-    return HttpResponse("Recently sold Menus:")
+    soldMenus = Purchase.objects.order_by("timestamp")
+    context = {
+        "soldMenus": soldMenus,
+    }
+    return render(request, "MenuIngredientMaster/sold.html", context)
+
+def addSoldEvent(request):
+    if request.method == "POST":
+        form = SoldEditForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('sold')
+    else:
+        form = SoldEditForm()
+    return render(request, "MenuIngredientMaster/addSoldEvent.html", {"form": form})
+
+def deleteSoldEvent(request, purchase_id):
+    toDelete = Purchase.objects.get(id=purchase_id)
+    toDelete.delete()
+    return redirect("sold")
+        
