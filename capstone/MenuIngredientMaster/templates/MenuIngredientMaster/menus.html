@@ -21,7 +21,7 @@
             <tr>
                 <td>{{ menu.title }}</td>
                 <td>{{ menu.price }}</td>
-                <td><a href="{% url 'showReceipe' menu.id %}"><button>Show Receipe</button></a></td>
+                <td><a href="{% url 'showRecipe' menu.id %}"><button>Show Recipe</button></a></td>
                 <td><a href="{% url 'changeMenu' menu.id %}"><button>Change Item</button></a></td>
                 <td><a href="{% url 'deleteMenu' menu.id %}"><button>Delete Item</button></a></td>
             </tr>
