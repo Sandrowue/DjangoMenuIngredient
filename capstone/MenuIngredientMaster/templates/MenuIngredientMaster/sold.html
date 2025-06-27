@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+</head>
+
+{% extends "MenuIngredientMaster/base.html" %}
+
+{% block content %}
+<br/>
+<a href="{% url 'addSoldEvent' %}">Add sold event</a>
+<br/>
+{% if soldMenus %}
+    <p>Sold Menus:</p>
+    <table>
+        <tr>
+            <th>Timestamp</th>
+            <th>Menu</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+        {% for menu in soldMenus %}
+           
+            <tr>
+                <td>{{ menu.timestamp }}</td>
+                <td>{{ menu.menu_item.title }}</td>
+                <td>{{ menu.menu_item.price }}</td>
+                <td><a href="{% url 'deleteSoldEvent' menu.id %}"><button>Delete event</button></a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No sold menus found or connection issue.</p>
+{% endif %}
+{% endblock %}
