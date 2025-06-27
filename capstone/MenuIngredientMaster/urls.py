@@ -12,8 +12,11 @@ urlpatterns = [
     path("addMenu", views.addMenu, name="addMenu"),
     path("changeMenu/<int:menuitem_id>", views.changeMenu, name="changeMenu"),
     path("deleteMenu/<int:menuitem_id>", views.deleteMenu, name="deleteMenu"),
-    path("showReceipe/<int:menuitem_id>", views.showReceipe, name="showReceipe"),
-    path("financials", views.financials, name="financials"),
-    path("sold", views.sold, name="sold"),
+    path("showRecipe/<int:menuitem_id>", views.showRecipe, name="showRecipe"),
     path("addRecipeItem", views.addRecipeItem, name="addRecipeItem"),
+    path("changeRecipeItem/<int:reciperequirements_id>", views.changeRecipeItem, name="changeRecipeItem"),
+    path("deleteRecipeItem/<int:reciperequirements_id>", views.deleteRecipeItem, name="deleteRecipeItem"),
+    path("sold", views.sold, name="sold"),
+    path("addSoldEvent", views.addSoldEvent, name="addSoldEvent"),
+    path("deleteSoldEvent/<int:purchase_id>", views.deleteSoldEvent, name="deleteSoldEvent")
 ]
