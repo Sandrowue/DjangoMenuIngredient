@@ -19,14 +19,28 @@ def ingredients(request):
 
 def addIngredient(request):
     if request.method == "POST":
-        print('Meni läpi')
-        newIngredient = Ingredient()
-        newIngredient.name = request.POST['ingredientInput'] 
-        newIngredient.quantity = int(request.POST['amountInput'])
-        newIngredient.unit = request.POST['unitInput']
-        newIngredient.unit_price = float(request.POST['unitPriceInput'])
-        newIngredient.total_price = newIngredient.calculate_total_price()
-        newIngredient.save()
+        name = request.POST['ingredientInput']
+        amount = int(request.POST['amountInput'])
+        unit = request.POST['unitInput']
+        unit_price = float(request.POST['unitPriceInput'])
+
+        try: 
+            existing = Ingredient.objects.get(name=name, unit=unit)
+            new_quantity = existing.quantity + amount
+            new_untit_price = ((existing.unit_price * existing.quantity) + (unit_price * amount)) / new_quantity
+            existing.quantity = new_quantity
+            existing.unit_price = new_untit_price
+            existing.total_price = existing.calculate_total_price()
+            existing.save()
+
+        except Ingredient.DoesNotExist:
+            newIngredient = Ingredient()
+            newIngredient.name = request.POST['ingredientInput'] 
+            newIngredient.quantity = int(request.POST['amountInput'])
+            newIngredient.unit = request.POST['unitInput']
+            newIngredient.unit_price = float(request.POST['unitPriceInput'])
+            newIngredient.total_price = newIngredient.calculate_total_price()
+            newIngredient.save()
 
     return render(request, "MenuIngredientMaster/addIngredient.html")
 
@@ -93,6 +107,7 @@ def addRecipeItem(request):
             newItem.menu_item = form.cleaned_data["menu_item"]
             newItem.ingredient = form.cleaned_data["ingredient"]
             newItem.quantity = float(form.cleaned_data["quantity"])
+            newItem.cost = float(newItem.ingredient.unit_price * newItem.quantity)
             newItem.save()
             return redirect('addRecipeItem')
     else:
