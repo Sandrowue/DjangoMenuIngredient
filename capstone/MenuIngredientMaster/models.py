@@ -27,6 +27,7 @@ class MenuItem(models.Model):
 class Purchase(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     timestamp = models.DateTimeField("date purchased", default=timezone.now)
+    price = models.FloatField(default=0)
 
     def was_purchased_recently(self):
         return self.timestamp >= timezone.now() - datetime.timedelta(days=1)

@@ -22,7 +22,7 @@
             <tr>
                 <td>{{ menu.timestamp }}</td>
                 <td>{{ menu.menu_item.title }}</td>
-                <td>{{ menu.menu_item.price }}</td>
+                <td>{{ menu.price }}</td>
                 <td><a href="{% url 'deleteSoldEvent' menu.id %}"><button>Delete event</button></a></td>
             </tr>
         {% endfor %}

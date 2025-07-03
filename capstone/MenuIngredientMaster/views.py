@@ -136,7 +136,9 @@ def addSoldEvent(request):
     if request.method == "POST":
         form = SoldEditForm(request.POST)
         if form.is_valid():
-            form.save()
+            purchase = form.save(commit=False)
+            purchase.price = purchase.menu_item.price
+            purchase.save()
             return redirect('sold')
     else:
         form = SoldEditForm()
