@@ -20,7 +20,7 @@
 {% for ingredient in allIngredients %}
     <tr>
         <td>{{ ingredient.name }}</td>
-        <td>{{ ingredient.quantity }}</td>
+        <td>{{ ingredient.quantity|floatformat:2 }}</td>
         <td>{{ ingredient.unit }}</td>
         <td>{{ ingredient.unit_price|floatformat:2 }}</td>
         <td>{{ ingredient.total_price|floatformat:2 }}</td> 
