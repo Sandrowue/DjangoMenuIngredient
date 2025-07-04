@@ -154,7 +154,18 @@ def addSoldEvent(request):
             purchase = form.save(commit=False)
             purchase.price = purchase.menu_item.price
             purchase.save()
+
+            purchasedMenu = MenuItem.objects.get(id=purchase.menu_item_id)
+            menuIngredients = RecipeRequirements.objects.filter(menu_item=purchasedMenu)
+            for item in menuIngredients:
+                menuItem = Ingredient.objects.get(name=item.ingredient)
+                substract = menuItem.quantity - item.quantity
+                menuItem.quantity = substract
+                menuItem.total_price = menuItem.calculate_total_price()
+                menuItem.save()
+
             return redirect('sold')
+        
     else:
         form = SoldEditForm()
     return render(request, "MenuIngredientMaster/addSoldEvent.html", {"form": form})
@@ -163,4 +174,7 @@ def deleteSoldEvent(request, purchase_id):
     toDelete = Purchase.objects.get(id=purchase_id)
     toDelete.delete()
     return redirect("sold")
+
+def account(request):
+    pass
         
