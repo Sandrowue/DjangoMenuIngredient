@@ -5,7 +5,7 @@ from django.utils import timezone
 # Create your models here.
 class Ingredient(models.Model):
     name = models.CharField(max_length=75)
-    quantity = models.IntegerField(default=0)
+    quantity = models.FloatField(default=0)
     unit = models.CharField(max_length=15)
     unit_price = models.FloatField(default=0)
     total_price = models.FloatField(default=0)
@@ -16,6 +16,20 @@ class Ingredient(models.Model):
     def calculate_total_price(self):
         return self.quantity * self.unit_price
 
+class acquiredIngredients(models.Model):
+    name = models.CharField(max_length=75)
+    quantity = models.FloatField(default=0)
+    unit = models.CharField(max_length=15)
+    unit_price = models.FloatField(default=0)
+    total_price = models.FloatField(default=0)
+    timestamp = models.DateTimeField("date purchased", default=timezone.now)
+
+    def __str__(self):
+        return self.name
+    
+    def calculate_total_price(self):
+        return self.quantity * self.unit_price
+    
 
 class MenuItem(models.Model):
     title = models.CharField(max_length=75)
