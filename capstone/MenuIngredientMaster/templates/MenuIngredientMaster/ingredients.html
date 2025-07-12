@@ -8,7 +8,7 @@
 <br/>
 <a href="{% url 'addIngredient'%}">Add Ingredient</a>
 {% if allIngredients %}
-<p>All ingredients in the inventory:</p>
+<p><strong>All ingredients in the inventory:</strong></p>
     <table>
     <tr>
         <th>Ingredient</th>
@@ -20,7 +20,7 @@
 {% for ingredient in allIngredients %}
     <tr>
         <td>{{ ingredient.name }}</td>
-        <td>{{ ingredient.quantity|floatformat:2 }}</td>
+        <td>{{ ingredient.quantity|floatformat:3 }}</td>
         <td>{{ ingredient.unit }}</td>
         <td>{{ ingredient.unit_price|floatformat:2 }}</td>
         <td>{{ ingredient.total_price|floatformat:2 }}</td> 
@@ -29,6 +29,31 @@
     </tr>
 {% endfor %}
 </table>
+<p><strong>Ingredient purchases:</strong></p>
+    <table>
+        <tr>
+            <th>Timestamp</th>
+            <th>Ingredient</th>
+            <th>Amount</th>
+            <th>Unit</th>
+            <th>Price per Unit</th>
+            <th>Total Price</th>
+        </tr>
+    {% for purchase in purchaseEvents %}
+        <tr>
+            <td>{{ purchase.timestamp }}</td>
+            <td>{{ purchase.name }}</td>
+            <td>{{ purchase.quantity }}</td>
+            <td>{{ purchase.unit }}</td>
+            <td>{{ purchase.unit_price|floatformat:2 }}</td>
+            <td>{{ purchase.total_price|floatformat:2 }}</td> 
+            <td><a href="{% url 'changeAcquiredIngredient' purchase.id %}"><button>Change Item</button></a></td>
+            <td><a href="{% url 'deleteAcquiredIngredient' purchase.id %}"><button>Delete Item</button></a></td>
+        </tr>
+    {% endfor %}
+    </table>
+
+
 {% else %}
     <p>No ingredients available.</p>
 {% endif %}
