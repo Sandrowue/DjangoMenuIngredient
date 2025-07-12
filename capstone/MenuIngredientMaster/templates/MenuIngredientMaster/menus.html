@@ -10,7 +10,7 @@
 <br/>
 <a href="{% url 'addRecipeItem' %}">Add Receipe Item</a>
 {% if allMenus %}
-    <p>The menus and drinks we serve:</p>
+    <p><strong>The menus and drinks we serve:</strong></p>
     <table>
         <tr>
             <th>Menu</th>
@@ -27,7 +27,36 @@
             </tr>
         {% endfor %}
     </table>
-{% else %}
-    <p>No menus available.</p>
-{% endif %}
+    {% else %}
+        <p>No menus available.</p>
+    {% endif %}
+    <br/>
+    <br/>
+    <a href="{% url 'addSoldEvent' %}">Add sold event</a>
+    <br/>
+    <p><strong>Sold Menus:</strong></p>
+    {% if soldMenus %}
+    <p>Sold Menus:</p>
+    <table>
+        <tr>
+            <th>Timestamp</th>
+            <th>Menu</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+        {% for menu in soldMenus %}
+           
+            <tr>
+                <td>{{ menu.timestamp }}</td>
+                <td>{{ menu.menu_item.title }}</td>
+                <td>{{ menu.price }}</td>
+                <td><a href="{% url 'deleteSoldEvent' menu.id %}"><button>Delete event</button></a></td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No sold menus found or connection issue.</p>
+    {% endif %}
+    
+
 {% endblock %}
