@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from django.template import loader
 
-from .models import Ingredient, MenuItem, RecipeRequirements, Purchase
+from .models import Ingredient, MenuItem, RecipeRequirements, Purchase, AcquiredIngredient
 from .forms import RecipeEditForm, SoldEditForm
 
 # Create your views here.
@@ -11,9 +11,11 @@ def index(request):
 
 def ingredients(request):
     allIngredients = Ingredient.objects.order_by("name")
+    purchaseEvents = AcquiredIngredient.objects.order_by("-timestamp")
     template = loader.get_template("MenuIngredientMaster/ingredients.html")
     context = {
         "allIngredients": allIngredients,
+        "purchaseEvents": purchaseEvents,
     }
     return HttpResponse(template.render(context, request))
 
@@ -23,6 +25,16 @@ def addIngredient(request):
         amount = int(request.POST['amountInput'])
         unit = request.POST['unitInput']
         unit_price = float(request.POST['unitPriceInput'])
+
+        newAcquiredIngredient = AcquiredIngredient()
+        newAcquiredIngredient.timestamp = request.POST['timestampInput']
+        newAcquiredIngredient.name = request.POST['ingredientInput']
+        newAcquiredIngredient.quantity = float(request.POST['amountInput'])
+        newAcquiredIngredient.unit = request.POST['unitInput']
+        newAcquiredIngredient.unit_price = float(request.POST['unitPriceInput'])
+        newAcquiredIngredient.total_price = newAcquiredIngredient.calculate_total_price()
+        newAcquiredIngredient.save()
+        
 
         try: 
             existing = Ingredient.objects.get(name=name, unit=unit)
@@ -36,7 +48,7 @@ def addIngredient(request):
         except Ingredient.DoesNotExist:
             newIngredient = Ingredient()
             newIngredient.name = request.POST['ingredientInput'] 
-            newIngredient.quantity = int(request.POST['amountInput'])
+            newIngredient.quantity = float(request.POST['amountInput'])
             newIngredient.unit = request.POST['unitInput']
             newIngredient.unit_price = float(request.POST['unitPriceInput'])
             newIngredient.total_price = newIngredient.calculate_total_price()
@@ -49,16 +61,33 @@ def changeIngredient(request, ingredient_id):
     if request.method == 'POST':
         ingredient = ingredientitem
         ingredient.name = request.POST['ingredientInput'] 
-        ingredient.quantity = int(request.POST['amountInput'])
+        ingredient.quantity = float(request.POST['amountInput'])
         ingredient.unit = request.POST['unitInput']
         ingredient.unit_price = float(request.POST['unitPriceInput'])
         ingredient.total_price = ingredient.calculate_total_price()
         ingredient.save()
     return render(request, "MenuIngredientMaster/changeIngredient.html", {"ingredientitem": ingredientitem})
 
+def changeAcquiredIngredient(request, acquiredingredient_id):
+    ingredientitem = get_object_or_404(AcquiredIngredient, id=acquiredingredient_id)
+    if request.method == 'POST':
+        ingredient = ingredientitem
+        ingredient.name = request.POST['ingredientInput'] 
+        ingredient.quantity = float(request.POST['amountInput'])
+        ingredient.unit = request.POST['unitInput']
+        ingredient.unit_price = float(request.POST['unitPriceInput'])
+        ingredient.total_price = ingredient.calculate_total_price()
+        ingredient.timestamp = request.POST['timestampInput']
+        ingredient.save()
+    return render(request, "MenuIngredientMaster/changeAcquiredIngredient.html", {"ingredientitem": ingredientitem})
 
 def deleteIngredient(request, ingredient_id):
     toDelete = Ingredient.objects.get(id=ingredient_id)
+    toDelete.delete()
+    return redirect("ingredients")
+
+def deleteAcquiredIngredient(request, acquiredingredient_id):
+    toDelete = AcquiredIngredient.objects.get(id=acquiredingredient_id)
     toDelete.delete()
     return redirect("ingredients")
     
@@ -66,8 +95,10 @@ def deleteIngredient(request, ingredient_id):
 # Using render instead of HttpResponse
 def aviableMenus(request):
     allMenus = MenuItem.objects.order_by("title")
+    soldMenus = Purchase.objects.order_by("-timestamp")
     context = {
         "allMenus": allMenus,
+        "soldMenus": soldMenus,
     }
     return render(request, "MenuIngredientMaster/menus.html", context)
 
@@ -139,13 +170,6 @@ def deleteRecipeItem(request, reciperequirements_id):
     menuitem_id = toDelete.menu_item.id
     toDelete.delete()
     return redirect("showRecipe", menuitem_id=menuitem_id)
-    
-def sold(request):
-    soldMenus = Purchase.objects.order_by("timestamp")
-    context = {
-        "soldMenus": soldMenus,
-    }
-    return render(request, "MenuIngredientMaster/sold.html", context)
 
 def addSoldEvent(request):
     if request.method == "POST":
@@ -164,7 +188,7 @@ def addSoldEvent(request):
                 menuItem.total_price = menuItem.calculate_total_price()
                 menuItem.save()
 
-            return redirect('sold')
+            return redirect('aviableMenus')
         
     else:
         form = SoldEditForm()
@@ -173,7 +197,7 @@ def addSoldEvent(request):
 def deleteSoldEvent(request, purchase_id):
     toDelete = Purchase.objects.get(id=purchase_id)
     toDelete.delete()
-    return redirect("sold")
+    return redirect("aviableMenus")
 
 def account(request):
     pass
