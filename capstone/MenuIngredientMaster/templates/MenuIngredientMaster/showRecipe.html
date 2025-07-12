@@ -20,9 +20,9 @@
            
             <tr>
                 <td>{{ item.ingredient.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.ingredient.unit }}</td>
-                <td>{{ item.cost }}</td>
+                <td>{{ item.quantity|floatformat:3 }}</td>
+                <td>{{ item.ingredient.unit}}</td>
+                <td>{{ item.cost|floatformat:2 }}</td>
                 <td><a href="{% url 'changeRecipeItem' item.id %}"><button>Change Item</button></a></td>
                 <td><a href="{% url 'deleteRecipeItem' item.id %}"><button>Delete Item</button></a></td>
             </tr>
