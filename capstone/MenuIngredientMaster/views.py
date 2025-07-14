@@ -1,21 +1,45 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from django.template import loader
+from django.utils.dateparse import parse_datetime
 
 from .models import Ingredient, MenuItem, RecipeRequirements, Purchase, AcquiredIngredient
 from .forms import RecipeEditForm, SoldEditForm
+from datetime import datetime
 
 # Create your views here.
 def index(request):
-    return render(request, "MenuIngredientMaster/index.html")
+    allIngredients = Ingredient.objects.order_by("name")
+    start = request.GET.get("timespan_start")
+    end = request.GET.get('timespan_end')
+    ingredient_names = request.GET.getlist("ingredient_names")
+    if start or end or ingredient_names:
+        purchaseEvents = AcquiredIngredient.objects.order_by("-timestamp")
+        if start:
+            start_dt = datetime.strptime(start, "%Y-%m-%dT%H:%M")
+            if start_dt:
+                purchaseEvents = purchaseEvents.filter(timestamp__gte=start_dt)
+        if end:
+            end_dt = datetime.strptime(end, "%Y-%m-%dT%H:%M")
+            if end_dt:
+                purchaseEvents = purchaseEvents.filter(timestamp__lte=end_dt)
+        if ingredient_names and "__all__" not in ingredient_names:
+            purchaseEvents = purchaseEvents.filter(name__in=ingredient_names)
+    else:
+        purchaseEvents = AcquiredIngredient.objects.none()
+    context = {
+        "purchaseEvents": purchaseEvents,
+        "allIngredients": allIngredients,
+        "selected_ingredient_names": ingredient_names,
+    }
+    return render(request, "MenuIngredientMaster/index.html", context)
+
 
 def ingredients(request):
     allIngredients = Ingredient.objects.order_by("name")
-    purchaseEvents = AcquiredIngredient.objects.order_by("-timestamp")
     template = loader.get_template("MenuIngredientMaster/ingredients.html")
     context = {
-        "allIngredients": allIngredients,
-        "purchaseEvents": purchaseEvents,
+        "allIngredients": allIngredients,   
     }
     return HttpResponse(template.render(context, request))
 

@@ -14,7 +14,7 @@
         <th>Ingredient</th>
         <th>Amount</th>
         <th>Unit</th>
-        <th>Price per Unit</th>
+        <th>Average unit price</th>
         <th>Total Price</th>
     </tr>
 {% for ingredient in allIngredients %}
@@ -28,32 +28,6 @@
         <td><a href="{% url 'deleteIngredient' ingredient.id %}"><button>Delete Item</button></a></td>
     </tr>
 {% endfor %}
-</table>
-<p><strong>Ingredient purchases:</strong></p>
-    <table>
-        <tr>
-            <th>Timestamp</th>
-            <th>Ingredient</th>
-            <th>Amount</th>
-            <th>Unit</th>
-            <th>Price per Unit</th>
-            <th>Total Price</th>
-        </tr>
-    {% for purchase in purchaseEvents %}
-        <tr>
-            <td>{{ purchase.timestamp }}</td>
-            <td>{{ purchase.name }}</td>
-            <td>{{ purchase.quantity }}</td>
-            <td>{{ purchase.unit }}</td>
-            <td>{{ purchase.unit_price|floatformat:2 }}</td>
-            <td>{{ purchase.total_price|floatformat:2 }}</td> 
-            <td><a href="{% url 'changeAcquiredIngredient' purchase.id %}"><button>Change Item</button></a></td>
-            <td><a href="{% url 'deleteAcquiredIngredient' purchase.id %}"><button>Delete Item</button></a></td>
-        </tr>
-    {% endfor %}
-    </table>
-
-
 {% else %}
     <p>No ingredients available.</p>
 {% endif %}
