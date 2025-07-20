@@ -10,9 +10,13 @@ from datetime import datetime
 # Create your views here.
 def index(request):
     allIngredients = Ingredient.objects.order_by("name")
+    allMenus = MenuItem.objects.order_by("title")
     start = request.GET.get("timespan_start")
+    menuStart = request.GET.get("menu_timespan_start")
     end = request.GET.get('timespan_end')
+    menuEnd = request.GET.get("menu_timespan_end")
     ingredient_names = request.GET.getlist("ingredient_names")
+    menu_names = request.GET.getlist("menu_names")
     if start or end or ingredient_names:
         purchaseEvents = AcquiredIngredient.objects.order_by("-timestamp")
         if start:
@@ -27,10 +31,29 @@ def index(request):
             purchaseEvents = purchaseEvents.filter(name__in=ingredient_names)
     else:
         purchaseEvents = AcquiredIngredient.objects.none()
+
+    if menuStart or menuEnd or menu_names:        
+        soldMenus = Purchase.objects.order_by("-timestamp")
+        if menuStart:
+            menuStart_dt = datetime.strptime(menuStart, "%Y-%m-%dT%H:%M")
+            if menuStart_dt:
+                soldMenus = soldMenus.filter(timestamp__gte=menuStart_dt)
+        if menuEnd:
+            menuEnd_dt = datetime.strptime(menuEnd, "%Y-%m-%dT%H:%M")
+            if menuEnd_dt:
+                soldMenus = soldMenus.filter(timestamp__lte=menuEnd_dt)
+        if menu_names and "__all__" not in menu_names:
+            soldMenus = soldMenus.filter(menu_item__title__in=menu_names)
+    else:
+        soldMenus = Purchase.objects.none()
+
     context = {
         "purchaseEvents": purchaseEvents,
         "allIngredients": allIngredients,
         "selected_ingredient_names": ingredient_names,
+        "allMenus": allMenus,
+        "soldMenus": soldMenus,
+        "selected_menu_names": menu_names
     }
     return render(request, "MenuIngredientMaster/index.html", context)
 
@@ -155,6 +178,7 @@ def showRecipe(request, menuitem_id):
     return render(request, 'MenuIngredientMaster/showRecipe.html', {"receipe": receipe, "menu": menu})
 
 def addRecipeItem(request):
+    menu_item_id = request.GET.get("menu_item")
     if request.method == "POST":
         form = RecipeEditForm(request.POST) 
         if form.is_valid():
@@ -164,11 +188,14 @@ def addRecipeItem(request):
             newItem.quantity = float(form.cleaned_data["quantity"])
             newItem.cost = float(newItem.ingredient.unit_price * newItem.quantity)
             newItem.save()
-            return redirect('addRecipeItem')
-    else:
-        form = RecipeEditForm()
+            return redirect(f'{request.path}?menu_item={newItem.menu_item.id}')
+    else: 
+        if menu_item_id:
+            form = RecipeEditForm(initial={"menu_item": menu_item_id})
+        else:
+            form = RecipeEditForm()
     ingredients = Ingredient.objects.all()
-    return render(request, 'MenuIngredientMaster/addRecipeItem.html' , {"form":form, "ingredients": ingredients})
+    return render(request, 'MenuIngredientMaster/addRecipeItem.html' , {"form":form, "ingredients": ingredients, "menu_item_id": menu_item_id})
 
 def changeRecipeItem(request, reciperequirements_id):
     recipe_item = get_object_or_404(RecipeRequirements, id=reciperequirements_id)
@@ -178,6 +205,7 @@ def changeRecipeItem(request, reciperequirements_id):
             recipe_item.menu_item = form.cleaned_data["menu_item"]
             recipe_item.ingredient = form.cleaned_data["ingredient"]
             recipe_item.quantity = float(form.cleaned_data["quantity"])
+            recipe_item.cost = float(recipe_item.ingredient.unit_price * recipe_item.quantity)
             recipe_item.save()
             return redirect('showRecipe', menuitem_id=recipe_item.menu_item.id)
     else:

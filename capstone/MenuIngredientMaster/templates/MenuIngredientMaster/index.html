@@ -5,6 +5,9 @@
 {% extends "MenuIngredientMaster/base.html" %}
 
 {% block content %}
+<br/>
+<a href="{% url 'addSoldEvent' %}"><button>Add sold event</button></a>
+<br/>
 <h1>Django Delight's Menu and Ingredient Master</h1>
 <p>Up to date with our ingredient inventory and Menu planing.</p>
 <h2>Ingredient purchases:</h2>
@@ -36,7 +39,6 @@
       }
    });
    </script>
-
    <input type="submit" value="Filter">
 </form>
 </br>
@@ -64,4 +66,57 @@
 {% endfor %}
 </table>
 {% endif %}
+
+<p><strong>Sold Menus:</strong></p>
+<form method="get">
+   <label for="menu_timespan_start">From:</label>
+   <input type="datetime-local" id="menu_timespan_start" name="menu_timespan_start" value="{{ request.GET.menu_timespan_start }}">
+   
+   <label for="menu_timespan_end">To:</label>
+   <input type="datetime-local" id="menu_timespan_end" name="menu_timespan_end" value="{{ request.GET.timespan_end }}">
+
+   <select id="menu_names" name="menu_names" multiple>
+      <option value="__all__"
+         {% if "__all__" in selected_menu_names %}selected{% endif %}>
+         All
+      </option>
+      {% for menu in allMenus %}
+         <option value="{{ menu.title }}"
+            {% if menu.title in selected_menu_names %}selected{% endif %}>
+            {{ menu.title }}
+         </option>
+      {% endfor %}
+   </select>
+   <script>
+   document.getElementById('menu_names').addEventListener('change', function(e) {
+      if ([...this.selectedOptions].some(opt => opt.value === '__all__')) {
+         for (let opt of this.options) {
+            opt.selected = true;
+         }
+      }
+   });
+   </script>
+
+   <input type="submit" value="Filter">
+</form>
+{% if soldMenus %}
+<p>Sold Menus:</p>
+<table>
+   <tr>
+      <th>Timestamp</th>
+      <th>Menu</th>
+      <th>Price</th>
+      <th></th>
+   </tr>
+   {% for menu in soldMenus %}
+      
+      <tr>
+            <td>{{ menu.timestamp }}</td>
+            <td>{{ menu.menu_item.title }}</td>
+            <td>{{ menu.price }}</td>
+            <td><a href="{% url 'deleteSoldEvent' menu.id %}"><button>Delete event</button></a></td>
+      </tr>
+   {% endfor %}
+   {% endif %}
+</table>
 {% endblock %}
