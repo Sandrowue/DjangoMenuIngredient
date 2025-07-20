@@ -6,9 +6,8 @@
 
 {% block content %}
 <br/>
-<a href="{% url 'addMenu' %}">Add Menu</a>
+<a href="{% url 'addMenu' %}"><button>Add Menu</button></a>
 <br/>
-<a href="{% url 'addRecipeItem' %}">Add Receipe Item</a>
 {% if allMenus %}
     <p><strong>The menus and drinks we serve:</strong></p>
     <table>
@@ -22,7 +21,8 @@
                 <td>{{ menu.title }}</td>
                 <td>{{ menu.price }}</td>
                 <td><a href="{% url 'showRecipe' menu.id %}"><button>Show Recipe</button></a></td>
-                <td><a href="{% url 'changeMenu' menu.id %}"><button>Change Item</button></a></td>
+                <td><a href="{% url 'addRecipeItem' %}?menu_item={{ menu.id }}"><button>Add Recipe Item</button></a></td>
+                <td><a href="{% url 'changeMenu' menu.id %}"><button>Change Menu Item</button></a></td>
                 <td><a href="{% url 'deleteMenu' menu.id %}"><button>Delete Item</button></a></td>
             </tr>
         {% endfor %}
@@ -31,32 +31,5 @@
         <p>No menus available.</p>
     {% endif %}
     <br/>
-    <br/>
-    <a href="{% url 'addSoldEvent' %}">Add sold event</a>
-    <br/>
-    <p><strong>Sold Menus:</strong></p>
-    {% if soldMenus %}
-    <p>Sold Menus:</p>
-    <table>
-        <tr>
-            <th>Timestamp</th>
-            <th>Menu</th>
-            <th>Price</th>
-            <th></th>
-        </tr>
-        {% for menu in soldMenus %}
-           
-            <tr>
-                <td>{{ menu.timestamp }}</td>
-                <td>{{ menu.menu_item.title }}</td>
-                <td>{{ menu.price }}</td>
-                <td><a href="{% url 'deleteSoldEvent' menu.id %}"><button>Delete event</button></a></td>
-            </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-        <p>No sold menus found or connection issue.</p>
-    {% endif %}
     
-
 {% endblock %}

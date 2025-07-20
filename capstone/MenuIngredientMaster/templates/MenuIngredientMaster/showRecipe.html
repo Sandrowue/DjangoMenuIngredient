@@ -6,7 +6,7 @@
 
 {% block content %}
 <br/>
-<a href="{% url 'addRecipeItem' %}">Add Receipe Item</a>
+<a href="{% url 'addRecipeItem' %}?menu_item={{ menu.id }}"><button>Add Receipe Item</button></a>
 {% if receipe %}
     <p>Ingredients in receipe for one <strong>{{ menu.title }}</strong>:</p>
     <table>
