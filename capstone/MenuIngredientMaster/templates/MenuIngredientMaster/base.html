@@ -3,6 +3,14 @@
 </head>
 
 <body>
+    <div class="log">
+        <a href="{% url 'login' %}"><button>Login</button></a>
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+    <br/>
     <div class="topnav" id="pageTopNav">
         <a href="{% url 'index' %}" class="active">Account</a>
         <a href="{% url 'ingredients' %}">Ingredients</a>

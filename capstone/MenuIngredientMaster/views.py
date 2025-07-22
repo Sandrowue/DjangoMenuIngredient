@@ -1,11 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from django.template import loader
-from django.utils.dateparse import parse_datetime
+
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .models import Ingredient, MenuItem, RecipeRequirements, Purchase, AcquiredIngredient
 from .forms import RecipeEditForm, SoldEditForm
 from datetime import datetime
+
+def admin_required(view_func):
+    return user_passes_test(lambda u: u.is_staff)(view_func)
 
 # Create your views here.
 def index(request):
@@ -17,8 +21,8 @@ def index(request):
     menuEnd = request.GET.get("menu_timespan_end")
     ingredient_names = request.GET.getlist("ingredient_names")
     menu_names = request.GET.getlist("menu_names")
-    ingredient_total_cost = ""
-    income = ""
+    ingredient_total_cost = 0
+    income = 0
     if start or end or ingredient_names:
         purchaseEvents = AcquiredIngredient.objects.order_by("-timestamp")
         if start:
@@ -75,6 +79,7 @@ def ingredients(request):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
 def addIngredient(request):
     if request.method == "POST":
         name = request.POST['ingredientInput']
@@ -137,11 +142,13 @@ def changeAcquiredIngredient(request, acquiredingredient_id):
         ingredient.save()
     return render(request, "MenuIngredientMaster/changeAcquiredIngredient.html", {"ingredientitem": ingredientitem})
 
+@admin_required
 def deleteIngredient(request, ingredient_id):
     toDelete = Ingredient.objects.get(id=ingredient_id)
     toDelete.delete()
     return redirect("ingredients")
 
+@admin_required
 def deleteAcquiredIngredient(request, acquiredingredient_id):
     toDelete = AcquiredIngredient.objects.get(id=acquiredingredient_id)
     toDelete.delete()
@@ -158,6 +165,7 @@ def aviableMenus(request):
     }
     return render(request, "MenuIngredientMaster/menus.html", context)
 
+@admin_required
 def addMenu(request):
     if request.method == "POST":
         newMenu = MenuItem()
@@ -167,6 +175,7 @@ def addMenu(request):
 
     return render(request, 'MenuIngredientMaster/addMenu.html')
 
+@admin_required
 def changeMenu(request, menuitem_id):
     menuitem = get_object_or_404(MenuItem, id=menuitem_id)
     if request.method == "POST":
@@ -176,6 +185,7 @@ def changeMenu(request, menuitem_id):
         menu.save()
     return render(request, 'MenuIngredientMaster/changeMenu.html', {"menuitem": menuitem})
 
+@admin_required
 def deleteMenu(request, menuitem_id):
     toDelete = MenuItem.objects.get(id=menuitem_id)
     toDelete.delete()
@@ -187,6 +197,7 @@ def showRecipe(request, menuitem_id):
     total_cost = sum(item.cost for item in receipe)
     return render(request, 'MenuIngredientMaster/showRecipe.html', {"receipe": receipe, "menu": menu, "total_cost": total_cost})
 
+@admin_required
 def addRecipeItem(request):
     menu_item_id = request.GET.get("menu_item")
     if request.method == "POST":
@@ -207,6 +218,7 @@ def addRecipeItem(request):
     ingredients = Ingredient.objects.all()
     return render(request, 'MenuIngredientMaster/addRecipeItem.html' , {"form":form, "ingredients": ingredients, "menu_item_id": menu_item_id})
 
+@admin_required
 def changeRecipeItem(request, reciperequirements_id):
     recipe_item = get_object_or_404(RecipeRequirements, id=reciperequirements_id)
     if request.method == "POST":
@@ -227,12 +239,14 @@ def changeRecipeItem(request, reciperequirements_id):
     ingredients = Ingredient.objects.all()
     return render(request, 'MenuIngredientMaster/changeRecipeItem.html' , {"form":form, "ingredients": ingredients, "menu": recipe_item.menu_item})
 
+@admin_required
 def deleteRecipeItem(request, reciperequirements_id):
     toDelete = get_object_or_404(RecipeRequirements, id=reciperequirements_id)
     menuitem_id = toDelete.menu_item.id
     toDelete.delete()
     return redirect("showRecipe", menuitem_id=menuitem_id)
 
+@login_required
 def addSoldEvent(request):
     if request.method == "POST":
         form = SoldEditForm(request.POST)
@@ -257,6 +271,7 @@ def addSoldEvent(request):
     form.fields['menu_item'].queryset = MenuItem.objects.order_by('title')
     return render(request, "MenuIngredientMaster/addSoldEvent.html", {"form": form})
 
+@admin_required
 def deleteSoldEvent(request, purchase_id):
     toDelete = Purchase.objects.get(id=purchase_id)
     toDelete.delete()
