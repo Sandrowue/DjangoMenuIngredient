@@ -40,35 +40,34 @@
    });
    </script>
    <input type="submit" value="Filter">
-</form>
-</br>
-{% if purchaseEvents %}
-<table>
-   <tr>
-      <th>Timestamp</th>
-      <th>Ingredient</th>
-      <th>Amount</th>
-      <th>Unit</th>
-      <th>Unit price</th>
-      <th>Total Price</th>
-   </tr>
-{% for purchase in purchaseEvents %}
-   <tr>
-      <td>{{ purchase.timestamp }}</td>
-      <td>{{ purchase.name }}</td>
-      <td>{{ purchase.quantity }}</td>
-      <td>{{ purchase.unit }}</td>
-      <td>{{ purchase.unit_price|floatformat:2 }}</td>
-      <td>{{ purchase.total_price|floatformat:2 }}</td> 
-      <td><a href="{% url 'changeAcquiredIngredient' purchase.id %}"><button>Change Item</button></a></td>
-      <td><a href="{% url 'deleteAcquiredIngredient' purchase.id %}"><button>Delete Item</button></a></td>
-   </tr>
-{% endfor %}
+   </br>
+   {% if purchaseEvents %}
+   <table>
+      <tr>
+         <th>Timestamp</th>
+         <th>Ingredient</th>
+         <th>Amount</th>
+         <th>Unit</th>
+         <th>Unit price</th>
+         <th>Total Price</th>
+      </tr>
+   {% for purchase in purchaseEvents %}
+      <tr>
+         <td>{{ purchase.timestamp }}</td>
+         <td>{{ purchase.name }}</td>
+         <td>{{ purchase.quantity }}</td>
+         <td>{{ purchase.unit }}</td>
+         <td>{{ purchase.unit_price|floatformat:2 }}</td>
+         <td>{{ purchase.total_price|floatformat:2 }}</td> 
+         <td><a href="{% url 'changeAcquiredIngredient' purchase.id %}"><button>Change Item</button></a></td>
+         <td><a href="{% url 'deleteAcquiredIngredient' purchase.id %}"><button>Delete Item</button></a></td>
+      </tr>
+   {% endfor %}
 </table>
-{% endif %}
-
-<p><strong>Sold Menus:</strong></p>
-<form method="get">
+<p><strong>Total spendings: </strong>{{ ingredient_total_cost|floatformat:2 }}</p>
+   {% endif %}
+   <br/>
+   <h2><strong>Sold Menus:</strong></h2>
    <label for="menu_timespan_start">From:</label>
    <input type="datetime-local" id="menu_timespan_start" name="menu_timespan_start" value="{{ request.GET.menu_timespan_start }}">
    
@@ -96,27 +95,31 @@
       }
    });
    </script>
-
    <input type="submit" value="Filter">
-</form>
-{% if soldMenus %}
-<p>Sold Menus:</p>
-<table>
-   <tr>
-      <th>Timestamp</th>
-      <th>Menu</th>
-      <th>Price</th>
-      <th></th>
-   </tr>
-   {% for menu in soldMenus %}
-      
+   {% if soldMenus %}
+   <table>
       <tr>
-            <td>{{ menu.timestamp }}</td>
-            <td>{{ menu.menu_item.title }}</td>
-            <td>{{ menu.price }}</td>
-            <td><a href="{% url 'deleteSoldEvent' menu.id %}"><button>Delete event</button></a></td>
+         <th>Timestamp</th>
+         <th>Menu</th>
+         <th>Price</th>
+         <th></th>
       </tr>
-   {% endfor %}
-   {% endif %}
-</table>
+      {% for menu in soldMenus %}
+         
+         <tr>
+               <td>{{ menu.timestamp }}</td>
+               <td>{{ menu.menu_item.title }}</td>
+               <td>{{ menu.price }}</td>
+               <td><a href="{% url 'deleteSoldEvent' menu.id %}"><button>Delete event</button></a></td>
+         </tr>
+      {% endfor %}
+      {% endif %}
+   </table>
+   <p><strong>Total income: </strong>{{ income|floatformat:2 }}</p>
+</form>
+<br/>
+<h2><strong>Balance:</strong></h2>
+<p><strong>Total income: </strong>{{ income|floatformat:2 }} <strong>- Total spendings: </strong>{{ ingredient_total_cost|floatformat:2 }} <strong>= Balance: </strong>{{ balance|floatformat:2 }}</p>
+<br/>
+
 {% endblock %}

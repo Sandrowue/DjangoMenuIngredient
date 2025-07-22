@@ -17,7 +17,6 @@
             <th>Cost</th>
         </tr>
         {% for item in receipe %}
-           
             <tr>
                 <td>{{ item.ingredient.name }}</td>
                 <td>{{ item.quantity|floatformat:3 }}</td>
@@ -28,6 +27,7 @@
             </tr>
         {% endfor %}
     </table>
+    <p><strong>Total cost:</strong>{{ total_cost|floatformat:2 }}</p>
 {% else %}
     <p>No receipe ingredients available.</p>
 {% endif %}

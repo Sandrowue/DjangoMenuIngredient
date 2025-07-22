@@ -17,6 +17,8 @@ def index(request):
     menuEnd = request.GET.get("menu_timespan_end")
     ingredient_names = request.GET.getlist("ingredient_names")
     menu_names = request.GET.getlist("menu_names")
+    ingredient_total_cost = ""
+    income = ""
     if start or end or ingredient_names:
         purchaseEvents = AcquiredIngredient.objects.order_by("-timestamp")
         if start:
@@ -29,6 +31,7 @@ def index(request):
                 purchaseEvents = purchaseEvents.filter(timestamp__lte=end_dt)
         if ingredient_names and "__all__" not in ingredient_names:
             purchaseEvents = purchaseEvents.filter(name__in=ingredient_names)
+        ingredient_total_cost = sum(p.total_price for p in purchaseEvents)
     else:
         purchaseEvents = AcquiredIngredient.objects.none()
 
@@ -44,8 +47,11 @@ def index(request):
                 soldMenus = soldMenus.filter(timestamp__lte=menuEnd_dt)
         if menu_names and "__all__" not in menu_names:
             soldMenus = soldMenus.filter(menu_item__title__in=menu_names)
+        income = sum(p.price for p in soldMenus)
     else:
         soldMenus = Purchase.objects.none()
+
+    balance = income - ingredient_total_cost
 
     context = {
         "purchaseEvents": purchaseEvents,
@@ -53,7 +59,10 @@ def index(request):
         "selected_ingredient_names": ingredient_names,
         "allMenus": allMenus,
         "soldMenus": soldMenus,
-        "selected_menu_names": menu_names
+        "selected_menu_names": menu_names,
+        "ingredient_total_cost": ingredient_total_cost,
+        "income": income,
+        "balance": balance
     }
     return render(request, "MenuIngredientMaster/index.html", context)
 
@@ -174,8 +183,9 @@ def deleteMenu(request, menuitem_id):
 
 def showRecipe(request, menuitem_id):
     menu= get_object_or_404(MenuItem, id=menuitem_id)
-    receipe = RecipeRequirements.objects.filter(menu_item_id=menuitem_id)
-    return render(request, 'MenuIngredientMaster/showRecipe.html', {"receipe": receipe, "menu": menu})
+    receipe = RecipeRequirements.objects.filter(menu_item_id=menuitem_id).order_by('ingredient__name')
+    total_cost = sum(item.cost for item in receipe)
+    return render(request, 'MenuIngredientMaster/showRecipe.html', {"receipe": receipe, "menu": menu, "total_cost": total_cost})
 
 def addRecipeItem(request):
     menu_item_id = request.GET.get("menu_item")
@@ -240,10 +250,11 @@ def addSoldEvent(request):
                 menuItem.total_price = menuItem.calculate_total_price()
                 menuItem.save()
 
-            return redirect('aviableMenus')
+            return redirect('index')
         
     else:
         form = SoldEditForm()
+    form.fields['menu_item'].queryset = MenuItem.objects.order_by('title')
     return render(request, "MenuIngredientMaster/addSoldEvent.html", {"form": form})
 
 def deleteSoldEvent(request, purchase_id):
