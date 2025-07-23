@@ -248,6 +248,7 @@ def deleteRecipeItem(request, reciperequirements_id):
 
 @login_required
 def addSoldEvent(request):
+    message = ""
     if request.method == "POST":
         form = SoldEditForm(request.POST)
         if form.is_valid():
@@ -257,19 +258,33 @@ def addSoldEvent(request):
 
             purchasedMenu = MenuItem.objects.get(id=purchase.menu_item_id)
             menuIngredients = RecipeRequirements.objects.filter(menu_item=purchasedMenu)
+
+            missing_ingredients = []
             for item in menuIngredients:
                 menuItem = Ingredient.objects.get(name=item.ingredient)
                 substract = menuItem.quantity - item.quantity
-                menuItem.quantity = substract
-                menuItem.total_price = menuItem.calculate_total_price()
-                menuItem.save()
+                if substract < 0:
+                    missing_ingredients.append(menuItem.name)
 
-            return redirect('index')
+            if missing_ingredients:
+                message = f"Not enough of: {', '.join(missing_ingredients)} to sell {purchasedMenu.title}!"
+                    
+
+            else:        
+                for item in menuIngredients:
+                    menuItem = Ingredient.objects.get(name=item.ingredient)
+                    substract = menuItem.quantity - item.quantity
+                    menuItem.quantity = substract
+                    menuItem.total_price = menuItem.calculate_total_price()
+                    menuItem.save()
+
+            if not message:
+                return redirect('index')
         
     else:
         form = SoldEditForm()
     form.fields['menu_item'].queryset = MenuItem.objects.order_by('title')
-    return render(request, "MenuIngredientMaster/addSoldEvent.html", {"form": form})
+    return render(request, "MenuIngredientMaster/addSoldEvent.html", {"form": form, "message": message})
 
 @admin_required
 def deleteSoldEvent(request, purchase_id):

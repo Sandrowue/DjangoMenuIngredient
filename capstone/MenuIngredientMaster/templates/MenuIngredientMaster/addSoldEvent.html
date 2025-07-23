@@ -7,6 +7,10 @@
 
     {% block content %}
     <body>
+        <br/>
+        {% if message %}
+        <div style="color: red;">{{ message }}</div>
+        {% endif %}
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
