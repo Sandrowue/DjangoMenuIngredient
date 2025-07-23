@@ -10,6 +10,10 @@
 <br/>
 <h1>Django Delight's Menu and Ingredient Master</h1>
 <p>Up to date with our ingredient inventory and Menu planing.</p>
+<br/>
+<h2><strong>Balance:</strong></h2>
+<p><strong>Total income: </strong>{{ income|floatformat:2 }} <strong>- Total spendings: </strong>{{ ingredient_total_cost|floatformat:2 }} <strong>= Balance: </strong>{{ balance|floatformat:2 }}</p>
+<br/>
 <h2>Ingredient purchases:</h2>
 <form method="get">
    <label for="timespan_start">From:</label>
@@ -113,13 +117,11 @@
                <td><a href="{% url 'deleteSoldEvent' menu.id %}"><button>Delete event</button></a></td>
          </tr>
       {% endfor %}
-      {% endif %}
    </table>
    <p><strong>Total income: </strong>{{ income|floatformat:2 }}</p>
+   {% endif %}
 </form>
-<br/>
-<h2><strong>Balance:</strong></h2>
-<p><strong>Total income: </strong>{{ income|floatformat:2 }} <strong>- Total spendings: </strong>{{ ingredient_total_cost|floatformat:2 }} <strong>= Balance: </strong>{{ balance|floatformat:2 }}</p>
+
 <br/>
 
 {% endblock %}
