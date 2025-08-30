@@ -12,7 +12,7 @@
         {% csrf_token %}
         <div>
         <label name="ingredientLabel" for="ingredientInput">
-            Add Ingredient:
+            <strong>Add Ingredient:</strong>
         </label>
         <input id="ingredientInput" name="ingredientInput">
         </div>
@@ -23,7 +23,7 @@
         </div>
     </br>
         <div>
-            <label name="unitLabel" for="unitInput">Unit</label>
+            <label name="unitLabel" for="unitInput"><strong>Unit</strong></label>
             <input id="unitInput" name="unitInput">
         </div>
     </br>
@@ -32,7 +32,21 @@
             <input id="unitPriceInput" name="unitPriceInput">
         </div>
     </br>
+        <div>
+            <label name="timestampLabel" for="timestampInput">Timestamp</label>
+            <input id="timestampInput" name="timestampInput" type="datetime-local">
+        </div>
+    </br>
         <input type="submit" value="Submit"/>
+        <script>
+        // Set default value to now if empty
+        const input = document.getElementById('timestampInput');
+        if (!input.value) {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for timezone
+            input.value = now.toISOString().slice(0,16);
+        }
+        </script>
         
     </form>
 </html>

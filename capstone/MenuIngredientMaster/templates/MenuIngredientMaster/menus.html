@@ -6,11 +6,10 @@
 
 {% block content %}
 <br/>
-<a href="{% url 'addMenu' %}">Add Menu</a>
+<a href="{% url 'addMenu' %}"><button>Add Menu</button></a>
 <br/>
-<a href="{% url 'addRecipeItem' %}">Add Receipe Item</a>
 {% if allMenus %}
-    <p>The menus and drinks we serve:</p>
+    <p><strong>The menus and drinks we serve:</strong></p>
     <table>
         <tr>
             <th>Menu</th>
@@ -22,12 +21,15 @@
                 <td>{{ menu.title }}</td>
                 <td>{{ menu.price }}</td>
                 <td><a href="{% url 'showRecipe' menu.id %}"><button>Show Recipe</button></a></td>
-                <td><a href="{% url 'changeMenu' menu.id %}"><button>Change Item</button></a></td>
+                <td><a href="{% url 'addRecipeItem' %}?menu_item={{ menu.id }}"><button>Add Recipe Item</button></a></td>
+                <td><a href="{% url 'changeMenu' menu.id %}"><button>Change Menu Item</button></a></td>
                 <td><a href="{% url 'deleteMenu' menu.id %}"><button>Delete Item</button></a></td>
             </tr>
         {% endfor %}
     </table>
-{% else %}
-    <p>No menus available.</p>
-{% endif %}
+    {% else %}
+        <p>No menus available.</p>
+    {% endif %}
+    <br/>
+    
 {% endblock %}

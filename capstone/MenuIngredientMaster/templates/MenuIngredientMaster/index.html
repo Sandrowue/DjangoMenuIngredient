@@ -5,6 +5,123 @@
 {% extends "MenuIngredientMaster/base.html" %}
 
 {% block content %}
+<br/>
+<a href="{% url 'addSoldEvent' %}"><button>Add sold event</button></a>
+<br/>
 <h1>Django Delight's Menu and Ingredient Master</h1>
 <p>Up to date with our ingredient inventory and Menu planing.</p>
+<br/>
+<h2><strong>Balance:</strong></h2>
+<p><strong>Total income: </strong>{{ income|floatformat:2 }} <strong>- Total spendings: </strong>{{ ingredient_total_cost|floatformat:2 }} <strong>= Balance: </strong>{{ balance|floatformat:2 }}</p>
+<br/>
+<h2>Ingredient purchases:</h2>
+<form method="get">
+   <label for="timespan_start">From:</label>
+   <input type="datetime-local" id="timespan_start" name="timespan_start" value="{{ request.GET.timespan_start }}">
+   
+   <label for="timespan_end">To:</label>
+   <input type="datetime-local" id="timespan_end" name="timespan_end" value="{{ request.GET.timespan_end }}">
+
+   <select id="ingredient_names" name="ingredient_names" multiple>
+      <option value="__all__"
+         {% if "__all__" in selected_ingredient_names %}selected{% endif %}>
+         All
+      </option>
+      {% for ingredient in allIngredients %}
+         <option value="{{ ingredient.name }}"
+            {% if ingredient.name in selected_ingredient_names %}selected{% endif %}>
+            {{ ingredient.name }}
+         </option>
+      {% endfor %}
+   </select>
+   <script>
+   document.getElementById('ingredient_names').addEventListener('change', function(e) {
+      if ([...this.selectedOptions].some(opt => opt.value === '__all__')) {
+         for (let opt of this.options) {
+            opt.selected = true;
+         }
+      }
+   });
+   </script>
+   <input type="submit" value="Filter">
+   </br>
+   {% if purchaseEvents %}
+   <table>
+      <tr>
+         <th>Timestamp</th>
+         <th>Ingredient</th>
+         <th>Amount</th>
+         <th>Unit</th>
+         <th>Unit price</th>
+         <th>Total Price</th>
+      </tr>
+   {% for purchase in purchaseEvents %}
+      <tr>
+         <td>{{ purchase.timestamp }}</td>
+         <td>{{ purchase.name }}</td>
+         <td>{{ purchase.quantity }}</td>
+         <td>{{ purchase.unit }}</td>
+         <td>{{ purchase.unit_price|floatformat:2 }}</td>
+         <td>{{ purchase.total_price|floatformat:2 }}</td> 
+         <td><a href="{% url 'changeAcquiredIngredient' purchase.id %}"><button>Change Item</button></a></td>
+         <td><a href="{% url 'deleteAcquiredIngredient' purchase.id %}"><button>Delete Item</button></a></td>
+      </tr>
+   {% endfor %}
+</table>
+<p><strong>Total spendings: </strong>{{ ingredient_total_cost|floatformat:2 }}</p>
+   {% endif %}
+   <br/>
+   <h2><strong>Sold Menus:</strong></h2>
+   <label for="menu_timespan_start">From:</label>
+   <input type="datetime-local" id="menu_timespan_start" name="menu_timespan_start" value="{{ request.GET.menu_timespan_start }}">
+   
+   <label for="menu_timespan_end">To:</label>
+   <input type="datetime-local" id="menu_timespan_end" name="menu_timespan_end" value="{{ request.GET.timespan_end }}">
+
+   <select id="menu_names" name="menu_names" multiple>
+      <option value="__all__"
+         {% if "__all__" in selected_menu_names %}selected{% endif %}>
+         All
+      </option>
+      {% for menu in allMenus %}
+         <option value="{{ menu.title }}"
+            {% if menu.title in selected_menu_names %}selected{% endif %}>
+            {{ menu.title }}
+         </option>
+      {% endfor %}
+   </select>
+   <script>
+   document.getElementById('menu_names').addEventListener('change', function(e) {
+      if ([...this.selectedOptions].some(opt => opt.value === '__all__')) {
+         for (let opt of this.options) {
+            opt.selected = true;
+         }
+      }
+   });
+   </script>
+   <input type="submit" value="Filter">
+   {% if soldMenus %}
+   <table>
+      <tr>
+         <th>Timestamp</th>
+         <th>Menu</th>
+         <th>Price</th>
+         <th></th>
+      </tr>
+      {% for menu in soldMenus %}
+         
+         <tr>
+               <td>{{ menu.timestamp }}</td>
+               <td>{{ menu.menu_item.title }}</td>
+               <td>{{ menu.price }}</td>
+               <td><a href="{% url 'deleteSoldEvent' menu.id %}"><button>Delete event</button></a></td>
+         </tr>
+      {% endfor %}
+   </table>
+   <p><strong>Total income: </strong>{{ income|floatformat:2 }}</p>
+   {% endif %}
+</form>
+
+<br/>
+
 {% endblock %}
